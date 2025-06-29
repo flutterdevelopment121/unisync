@@ -1,21 +1,26 @@
-shapely
-scikit-image
-pyclipper
-lmdb
-tqdm
+# Core scientific + image processing libraries
 numpy
-rapidfuzz
 opencv-python
 opencv-contrib-python
-cython
+scikit-image
 Pillow
+pyclipper
 pyyaml
-requests
-albumentations
-# to be compatible with albumentations
-albucore
+cython
+tqdm
+lmdb
+shapely
 packaging
+
+# OCR & augmentation
+paddleocr
+albumentations
+albucore  # needed by some albumentations versions
+
+# Optional: better fuzzy matching
+rapidfuzz
+
+# Networking / server
 Flask==2.3.3
 gunicorn==21.2.0
-paddleocr
-Pillow
+requests
