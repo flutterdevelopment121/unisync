@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'; // Supabase
 import 'main.dart'; // To access the Supabase client instance
 import 'dart:ui'; // For blur effect (glassmorphism)
+import 'timetable.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,7 +21,6 @@ class _HomePageState extends State<HomePage> {
     required double bottomPadding,
     required double topPanelHeight,
   }) {
-    final user = supabase.auth.currentUser;
     switch (index) {
       case 0:
         return Padding(
@@ -48,25 +48,57 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Welcome to UniSync!',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 20),
-                  if (user != null)
-                    Text(
-                      'Logged in as: ${user.email}',
-                      style: Theme.of(context).textTheme.titleMedium,
+            // Grid of 6 squares below the solid rectangle
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: GridView.builder(
+                shrinkWrap: true, // Important for GridView inside ListView
+                physics:
+                    const NeverScrollableScrollPhysics(), // To prevent nested scrolling
+                itemCount: 6,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // 2 squares per row
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 1, // Ensures the items are square
+                ),
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    // First square: Timetable, with an icon and tap action.
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const TimetablePage(),
+                          ),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Icon(
+                          Icons.table_chart,
+                          size: 60,
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
+                      ),
+                    );
+                  }
+                  // Placeholder for other squares
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.secondary,
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                  const SizedBox(height: 400), // To ensure scrolling
-                  const Text('More content down here...'),
-                ],
+                  );
+                },
               ),
             ),
+            // Content removed as requested.
           ],
         );
       case 2:
@@ -99,11 +131,13 @@ class _HomePageState extends State<HomePage> {
     const double navBarHeight = 70;
     const double navBarPadding = 25.0; // Symmetrical padding around the nav bar
 
-    // Define a single blur value for a consistent glass effect.
-    const double glassBlur = 10.0;
+    // Define blur values for the glass effects.
+    const double topOverlayBlur = 10.0;
+    const double navBarBlur = 20.0; // Increased blur for the navigation bar
 
     return Scaffold(
-      extendBody: true, // Allows the body to extend behind the bottom nav bar area
+      extendBody:
+          true, // Allows the body to extend behind the bottom nav bar area
       body: Stack(
         children: [
           // The main content of the page, which will be blurred by the container above.
@@ -126,7 +160,10 @@ class _HomePageState extends State<HomePage> {
                 bottomRight: Radius.circular(60),
               ),
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: glassBlur, sigmaY: glassBlur),
+                filter: ImageFilter.blur(
+                  sigmaX: topOverlayBlur,
+                  sigmaY: topOverlayBlur,
+                ),
                 child: Container(
                   height: topPanelHeight,
                   decoration: BoxDecoration(
@@ -152,17 +189,19 @@ class _HomePageState extends State<HomePage> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(30),
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: glassBlur, sigmaY: glassBlur),
+                  filter: ImageFilter.blur(
+                    sigmaX: topOverlayBlur,
+                    sigmaY: topOverlayBlur,
+                  ),
                   child: Container(
                     // Give it some horizontal margin to not touch the screen edges
                     margin: const EdgeInsets.symmetric(horizontal: 20),
                     height: topPanelHeight / 2,
                     decoration: BoxDecoration(
                       // A slightly more opaque color to be visible on top of the other overlay
-                      color: Theme.of(context)
-                          .colorScheme
-                          .secondary
-                          .withOpacity(0.2),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.secondary.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
@@ -179,7 +218,10 @@ class _HomePageState extends State<HomePage> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(50),
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: glassBlur, sigmaY: glassBlur),
+                  filter: ImageFilter.blur(
+                    sigmaX: navBarBlur,
+                    sigmaY: navBarBlur,
+                  ),
                   child: Container(
                     height: navBarHeight,
                     decoration: BoxDecoration(
