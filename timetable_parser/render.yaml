@@ -3,7 +3,7 @@ services:
     name: unisync-timetable-parser
     runtime: python
     plan: free
-    region: oregon  # or 'frankfurt', 'singapore', etc.
+    region: oregon
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn app:app"
     envVars:
