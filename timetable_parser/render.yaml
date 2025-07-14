@@ -10,3 +10,6 @@ services:
       - key: PYTHON_VERSION
         value: 3.10
     rootDir: timetable_parser/paddleocr
+    preBuild:
+      commands:
+        - apt-get update && apt-get install -y libglib2.0-0 libsm6 libxrender-dev libxext6
