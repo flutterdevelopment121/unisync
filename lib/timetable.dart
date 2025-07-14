@@ -31,7 +31,7 @@ class _TimetablePageState extends State<TimetablePage> {
     if (_image == null) return;
     setState(() => _loading = true);
 
-    final uri = Uri.parse('https://your-render-url/extract');
+    final uri = Uri.parse('https://unisync-e7aa.onrender.com/parse-timetable');
     final request = http.MultipartRequest('POST', uri)
       ..files.add(await http.MultipartFile.fromPath('image', _image!.path));
 

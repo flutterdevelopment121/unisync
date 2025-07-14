@@ -1,9 +1,7 @@
 from flask import Flask, request, jsonify
 import os
 from werkzeug.utils import secure_filename
-
-# For actual OCR integration (PaddleOCR imports)
-# from paddleocr import PaddleOCR  # Uncomment if you're using PaddleOCR directly
+from paddleocr import PaddleOCR  # Uncommented for real OCR
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -45,23 +43,24 @@ def parse_timetable():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
 
-        # 🔽 OCR logic (pseudo or real)
-        # ocr = PaddleOCR(use_angle_cls=True, lang='en')
-        # result = ocr.ocr(filepath, cls=True)
-        #
-        # Parse result into structured timetable format here
+        # Real OCR logic
+        ocr = PaddleOCR(use_angle_cls=True, lang='en')
+        result = ocr.ocr(filepath, cls=True)
 
-        # For now, let's mock the OCR response:
-        mock_response = {
-            "rows": [
-                {"time": "9:00", "subject": "Math", "teacher": "Dr. Sinha"},
-                {"time": "10:00", "subject": "Physics", "teacher": "Prof. Iyer"},
-                {"time": "11:00", "subject": "CS", "teacher": "Mr. Adil 😎"}
-            ],
-            "status": "success"
+        # Extract all detected text lines
+        lines = []
+        for line in result:
+            if isinstance(line, list):
+                for item in line:
+                    text = item[1][0]
+                    lines.append(text)
+
+        response = {
+            "lines": lines,
+            "status": "success" if lines else "no timetable found"
         }
 
-        return jsonify(mock_response)
+        return jsonify(response)
 
     return jsonify({'error': 'Invalid file type'}), 400
 
